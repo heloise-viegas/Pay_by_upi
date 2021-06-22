@@ -15,9 +15,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey gblKey = GlobalKey(debugLabel: 'QR');
+  TextEditingController? txtController;
 
   @override
+  void initState() {
+    txtController = TextEditingController();
+
+    super.initState();
+  }
+
+  //for hot reload
+  @override
   void reassemble() {
+    print('reassemble');
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
@@ -27,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('build');
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -85,21 +97,89 @@ class _HomeScreenState extends State<HomeScreen> {
             flex: 3,
             child: _blurArea(context),
           ),
-          Expanded(
-            child: Center(
-              child: Container(
-                child: TextButton(
-                  onPressed: () {
-                    // await controller?.flipCamera();
-                    // setState(() {});
-                  },
-                  child: Text(result == null
-                      ? 'Scan Here'
-                      : 'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}'),
-                ),
-              ),
+          Center(
+            child: BottomSheet(
+              builder: (BuildContext context) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 10.0),
+                      child: Expanded(
+                        child: Text(
+                          'Search Contact',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 40.0,
+                        top: 20.0,
+                        right: 40.0,
+                        bottom: 20.0,
+                      ),
+                      child: Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Select Number',
+                            hintStyle: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w300),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple),
+                            ),
+                            suffixIcon: Icon(
+                              Icons.contact_page_outlined,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                          controller: txtController,
+                          onChanged: (value) {
+                            txtController!.text = value;
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 40.0,
+                        top: 10.0,
+                        right: 40.0,
+                        //  bottom: 25.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.deepPurple,
+                            radius: 30,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Name'),
+                              Text('567889900'),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+              onClosing: () {},
             ),
-          ),
+          )
         ],
       ),
     );
@@ -129,12 +209,16 @@ class _HomeScreenState extends State<HomeScreen> {
     qrViewController.scannedDataStream.listen((scannedData) {
       setState(() {
         result = scannedData;
+        txtController!.text = result == null
+            ? 'Scan Here'
+            : 'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}';
       });
     });
   }
 
   @override
   void dispose() {
+    print('dispose');
     controller?.dispose();
     super.dispose();
   }
