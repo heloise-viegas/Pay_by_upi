@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zpay_by_upi/HomeScreen.dart';
+import 'package:zpay_by_upi/screens/HomeScreen.dart';
 
 void main() {
   runApp(MyApp());

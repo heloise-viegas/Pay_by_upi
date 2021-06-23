@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:zpay_by_upi/Contact.dart';
+import 'package:zpay_by_upi/modals/Contact.dart';
 
 class NetworkClass {
   static const url = 'https://fakeface.rest/face/json';
@@ -16,8 +16,7 @@ class NetworkClass {
       return _contact;
     } else {
       print(response.statusCode);
-
-      throw 'Problem with the get request';
+      throw 'Unable to fetch request';
     }
   }
 }

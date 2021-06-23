@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:zpay_by_upi/Contact.dart' as contact;
-import 'package:zpay_by_upi/NetworkClass.dart';
+import 'package:zpay_by_upi/modals/Contact.dart' as contact;
+import 'package:zpay_by_upi/services/NetworkClass.dart';
+import 'package:zpay_by_upi/shared/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   static String id = 'Home';
@@ -54,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Savings',
+          Constants.kAppBarText,
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
@@ -73,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(left: 20.0, top: 10.0),
             child: Expanded(
               child: Text(
-                'Pay through UPI',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                Constants.kHeadText,
+                style: Constants.kLabelTextStyle,
               ),
             ),
           ),
@@ -88,14 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Enter UPI Number',
-                  hintStyle:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                  hintText: Constants.kInput1Text,
+                  hintStyle: Constants.kHintTextStyle,
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepPurple),
+                    borderSide: BorderSide(color: Constants.kIconColour),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepPurple),
+                    borderSide: BorderSide(color: Constants.kIconColour),
                   ),
                 ),
                 controller: txtController,
@@ -117,9 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(left: 20.0, top: 10.0),
                       child: Expanded(
                         child: Text(
-                          'Search Contact',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
+                          Constants.kSearchText,
+                          style: Constants.kLabelTextStyle,
                         ),
                       ),
                     ),
@@ -133,18 +132,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Expanded(
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Select Number',
-                            hintStyle: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w300),
+                            hintText: Constants.kInput2Text,
+                            hintStyle: Constants.kHintTextStyle,
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.deepPurple),
+                              borderSide:
+                                  BorderSide(color: Constants.kIconColour),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.deepPurple),
+                              borderSide:
+                                  BorderSide(color: Constants.kIconColour),
                             ),
                             suffixIcon: Icon(
                               Icons.contact_page_outlined,
-                              color: Colors.deepPurple,
+                              color: Constants.kIconColour,
                             ),
                           ),
                           onTap: () async {
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 40.0,
-                        top: 10.0,
+                        // top: 5.0,
                         right: 40.0,
                         //  bottom: 25.0,
                       ),
@@ -193,10 +193,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 name,
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.w500),
+                                style: Constants.kInput1TextStyle,
                               ),
-                              Text(number),
+                              Text(
+                                number,
+                                style: Constants.kInput2TextStyle,
+                              ),
                             ],
                           )
                         ],
@@ -237,7 +239,8 @@ class _HomeScreenState extends State<HomeScreen> {
     qrViewController.scannedDataStream.listen((scannedData) {
       setState(() {
         result = scannedData;
-        txtController!.text = result == null ? 'Scan Here' : result!.code;
+        txtController!.text =
+            result == null ? Constants.kScanText : result!.code;
         //'Barcode Type: ${describeEnum(result!.format)}   Data:  ${result!.code}';
       });
     });
