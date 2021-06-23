@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:zpay_by_upi/Contact.dart' as contact;
+import 'package:zpay_by_upi/NetworkClass.dart';
 
 class HomeScreen extends StatefulWidget {
   static String id = 'Home';
@@ -14,13 +15,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Barcode? result;
   QRViewController? controller;
+  PhoneNumber? _phoneNumber;
   final GlobalKey gblKey = GlobalKey(debugLabel: 'QR');
   TextEditingController? txtController;
-
+  TextEditingController? contactController;
+  NetworkClass? networkClass;
+  contact.Contact? _contact;
+  String imgUrl = '';
+  String number = '';
+  String name = '';
   @override
   void initState() {
     txtController = TextEditingController();
-
+    contactController = TextEditingController();
+    networkClass = NetworkClass();
+    _contact = contact.Contact();
     super.initState();
   }
 
@@ -37,9 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('build');
-
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         // bottomOpacity: 0.0,
@@ -90,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderSide: BorderSide(color: Colors.deepPurple),
                   ),
                 ),
+                controller: txtController,
               ),
             ),
           ),
@@ -138,10 +147,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.deepPurple,
                             ),
                           ),
-                          controller: txtController,
-                          onChanged: (value) {
-                            txtController!.text = value;
+                          onTap: () async {
+                            final granted =
+                                await FlutterContactPicker.requestPermission();
+                            final PhoneContact contact =
+                                await FlutterContactPicker.pickPhoneContact();
+                            //api call//
+                            _contact = await networkClass!.getContact();
+
+                            setState(() {
+                              _phoneNumber = contact.phoneNumber;
+                              contactController!.text = _phoneNumber!.number!;
+                              imgUrl = _contact!.imageUrl!;
+                              number = _phoneNumber!.number!;
+                              name = contact!.fullName!;
+                            });
                           },
+                          controller: contactController,
+                          readOnly: true,
                         ),
                       ),
                     ),
@@ -157,18 +180,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            backgroundColor: Colors.deepPurple,
+                            backgroundImage: NetworkImage(imgUrl),
+                            backgroundColor: Colors.transparent,
                             radius: 30,
                           ),
                           SizedBox(
                             width: 10,
                           ),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Name'),
-                              Text('567889900'),
+                              Text(
+                                name,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                              Text(number),
                             ],
                           )
                         ],
@@ -209,9 +237,8 @@ class _HomeScreenState extends State<HomeScreen> {
     qrViewController.scannedDataStream.listen((scannedData) {
       setState(() {
         result = scannedData;
-        txtController!.text = result == null
-            ? 'Scan Here'
-            : 'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}';
+        txtController!.text = result == null ? 'Scan Here' : result!.code;
+        //'Barcode Type: ${describeEnum(result!.format)}   Data:  ${result!.code}';
       });
     });
   }

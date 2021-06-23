@@ -17,6 +17,8 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   qr_code_scanner: ^0.5.1
+  fluttercontactpicker: ^4.4.0
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:
