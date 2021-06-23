@@ -150,6 +150,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () async {
                             final granted =
                                 await FlutterContactPicker.requestPermission();
+                            if (granted == false) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: const Text('Permission: '),
+                                        content:
+                                            Text('Grant Access in Settings'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('OK'),
+                                          )
+                                        ],
+                                      ));
+                            }
                             final PhoneContact contact =
                                 await FlutterContactPicker.pickPhoneContact();
                             //api call//

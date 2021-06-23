@@ -17,5 +17,5 @@ class Constants {
   static const TextStyle kInput1TextStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
   static const TextStyle kInput2TextStyle =
-      TextStyle(fontSize: 15, fontWeight: FontWeight.w100);
+      TextStyle(fontSize: 20, fontWeight: FontWeight.w200);
 }
